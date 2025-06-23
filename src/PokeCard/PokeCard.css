@@ -1,0 +1,18 @@
+.poke-card-placeholder {
+  border: 2px dashed gray;
+  background-color: #fafafa;
+  transition: background 0.3s;
+}
+
+.poke-card-placeholder.over {
+  background-color: #e6f7ff;
+}
+
+.poke-card .ant-card-body,
+.poke-card-placeholder .ant-card-body {
+  height: 100%;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
