@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 import {
   DndContext,
   useSensor,
@@ -8,12 +8,15 @@ import {
   closestCenter,
   DragOverlay
 } from '@dnd-kit/core';
-import { Row, Col, Tabs } from 'antd';
 
+import { Row, Col, Tabs, Layout } from 'antd';
+import { HeartOutlined, SearchOutlined } from '@ant-design/icons';
 import ExploreSection from './ExploreSection';
 import FavouriteSection from './FavouriteSection';
-import BinderPage from './BinderPage';
+import DisplaySection from './DisplaySection';
 import PokeCard from '../PokeCard/PokeCard';
+
+const { Header, Content } = Layout;
 
 const STORAGE_KEY = 'pokemon_binder_slots';
 
@@ -76,37 +79,58 @@ const BinderView = () => {
     {
       key: 'explore-section',
       label: 'Explore',
-      children: <ExploreSection />
+      children: <ExploreSection />,
+      icon: <SearchOutlined />
     },
     {
       key: 'favourite-section',
-      label: 'Favourite',
-      children: <FavouriteSection />
+      label: 'Favourites',
+      children: <FavouriteSection />,
+      icon: <HeartOutlined />
     }
   ];
 
   return (
-    <div style={{ height: '100vh', overflow: 'hidden' }}>
-      <Row style={{ height: '100%' }}>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <Col span={6} style={{ height: '100%', overflowY: 'auto' }}>
-            <Tabs defaultActiveKey={activeTab} items={tabItems} onChange={handleTabChange} />
-          </Col>
-          <Col span={18} style={{ height: '100%', overflow: 'hidden' }}>
-            <BinderPage slots={slots} onDelete={handleDeleteCard} />
-          </Col>
+    <Layout>
+      <Header style={{
+        color: '#fff',
+        fontSize: '20px',
+        fontWeight: 'bold',
+        backgroundColor: '#001529',
+        padding: '0 24px',
+        lineHeight: '64px'
+      }}>
+        Pokémon Binder
+      </Header>
+
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <Content style={{ height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
+          <Row style={{ height: '100%' }}>
+            <Col span={10} style={{ height: '100%', padding: 16 }}>
+              <Tabs
+                tabPosition='left'
+                defaultActiveKey={activeTab}
+                items={tabItems}
+                onChange={handleTabChange}
+              />
+            </Col>
+            <Col span={12} style={{ height: '100%', padding: 16 }}>
+              <DisplaySection slots={slots} onDelete={handleDeleteCard}/>
+            </Col>
+            <Col span={2}/>
+          </Row>
 
           <DragOverlay>
-            {activeCard ? <PokeCard card={activeCard}/> : null}
+            {activeCard ? <PokeCard card={activeCard} /> : null}
           </DragOverlay>
-        </DndContext>
-      </Row>
-    </div>
+        </Content>
+      </DndContext>
+    </Layout>
   );
 };
 

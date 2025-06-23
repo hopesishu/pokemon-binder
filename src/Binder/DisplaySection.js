@@ -1,8 +1,8 @@
 import BinderPage from "./BinderPage";
 
-const DisplaySection = () => {
+const DisplaySection = ({ slots, onDelete }) => {
   return (
-    <BinderPage />
+    <BinderPage slots={slots} onDelete={onDelete} />
   )
 }
 

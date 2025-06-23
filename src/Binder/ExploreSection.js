@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Input, Button, Space, Row, Col } from 'antd';
+import { Flex, Typography, Input, Row, Col } from 'antd';
 
 import DraggableCard from '../DragAndDrop/DraggableCard';
+
+const { Text } = Typography;
 
 const ExploreSection = () => {
   const [cards, setCards] = useState([]);
@@ -14,8 +16,9 @@ const ExploreSection = () => {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      console.log("data", data)
-      setCards(data);
+      const filteredData = data.filter(item => item.image && item.image.trim() !== '');
+      console.log("filteredData", filteredData)
+      setCards(filteredData);
     } catch (err) {
       console.error('Failed to fetch cards:', err);
     }
@@ -29,30 +32,40 @@ const ExploreSection = () => {
   }
 
   return (
-    <>
-      <Space.Compact style={{ width: '300px' }}>
-        <Input
+    <Flex vertical gap={12}>
+      <div>
+        <Text strong>Search for Pokémon</Text>
+        <Input.Search 
           spellCheck={false}
-          placeholder="Input Pokemon Name"
+          placeholder="Enter name"
           value={pokemonName}
           onChange={(e) => setPokemonName(e.target.value)}
           onPressEnter={handleSubmit}
+          onSearch={handleSubmit}
         />
-        <Button onClick={handleSubmit} type="primary">Submit</Button>
-      </Space.Compact>
+      </div>
 
-      <div style={{ display: 'flex', justifyContent: 'centre', backgroundColor: 'gray', overflowY: 'auto', overflowX: 'hidden'}}>
+      <div 
+      className="custom-scrollbar" 
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        maxHeight: 'calc(100vh - 200px)',
+        paddingRight: '8px',
+      }}>
         <div style={{ width: '100%' }}>
-          <Row gutter={[4, 4]} justify='centre'>
+          <Row gutter={[8, 8]} justify="center">
             {cards && cards.map(card => (
-                <Col span={8} key={card.id}>
-                  <DraggableCard card={card} />
-                </Col>
+              <Col span={6} key={card.id}>
+                <DraggableCard card={card} />
+              </Col>
             ))}
           </Row>
         </div>
       </div>
-    </>
+    </Flex>
 
   );
 }

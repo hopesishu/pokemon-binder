@@ -2,7 +2,7 @@ import { Row } from 'antd';
 
 const FavouriteSection = () => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', backgroundColor: 'gray', overflowY: 'auto', overflowX: 'hidden'}}>
+    <div style={{ display: 'flex', justifyContent: 'center', overflowX: 'hidden'}}>
       <div style={{ width: '100%' }}>
         <Row gutter={[4, 4]} justify='center'>
           {/* {selectedCards && selectedCards.map(card => (
