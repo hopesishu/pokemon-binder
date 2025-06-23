@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-// import { v4 as uuidv4 } from 'uuid';
 import {
   DndContext,
   useSensor,
@@ -9,8 +8,9 @@ import {
   DragOverlay
 } from '@dnd-kit/core';
 
-import { Row, Col, Tabs, Layout } from 'antd';
-import { HeartOutlined, SearchOutlined } from '@ant-design/icons';
+import { Row, Col, Tabs, Layout, Pagination, Button } from 'antd';
+import { HeartOutlined, SearchOutlined, DeleteOutlined } from '@ant-design/icons';
+
 import ExploreSection from './ExploreSection';
 import FavouriteSection from './FavouriteSection';
 import DisplaySection from './DisplaySection';
@@ -18,23 +18,44 @@ import PokeCard from '../PokeCard/PokeCard';
 
 const { Header, Content } = Layout;
 
-const STORAGE_KEY = 'pokemon_binder_slots';
+const SAVED_CARDS_STORAGE_KEY = 'pokemon_binder_cards';
+const NUMBER_OF_PAGES = 5;
+const NUMBER_OF_SLOTS = 9;
 
 const BinderView = () => {
-  const [activeTab, setActiveTab] = useState('explore-section');
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, 
+      },
+    })
+  );
 
-  const [slots, setSlots] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved.length !== 0 ? JSON.parse(saved) : Array(9).fill(null);
+  const [cards, setCards] = useState(() => {
+    const savedCards = localStorage.getItem(SAVED_CARDS_STORAGE_KEY);
+    return savedCards ? JSON.parse(savedCards) : [];
   });
 
+  const [currentPage, setCurrentPage] = useState(0);
   const [activeCard, setActiveCard] = useState(null);
+  const [activeTab, setActiveTab] = useState('explore-section');
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(slots));
-    console.log("slots", slots)
-  }, [slots]);
+    localStorage.setItem(SAVED_CARDS_STORAGE_KEY, JSON.stringify(cards));
+    console.log("cards", cards)
+  }, [cards]);
+
+  const getSlotsForPage = (pageIndex) => {
+    const slots = Array(NUMBER_OF_SLOTS).fill(null);
+    cards.forEach(card => {
+      if (card.pageIndex === pageIndex && card.slotIndex >= 0 && card.slotIndex < NUMBER_OF_SLOTS) {
+        slots[card.slotIndex] = card;
+      }
+    });
+    return slots;
+  };
+
+  const slots = getSlotsForPage(currentPage);
 
   const handleDragStart = (event) => {
     setActiveCard(event.active.data.current.card);
@@ -48,32 +69,50 @@ const BinderView = () => {
     const slotIndex = parseInt(over.id.replace('slot-', ''), 10);
     const card = active.data.current.card;
 
-    const clonedCard = {
+    const newCard = {
       ...card,
-      slotIndex
+      slotIndex,
+      pageIndex: currentPage
     };
 
-    setSlots((prev) => {
-      const newSlots = [...prev];
-      newSlots[slotIndex] = clonedCard;
-      return newSlots;
+    setCards((prevCards) => {
+      const updated = [...prevCards];
+      const existingIndex = updated.findIndex(
+        (c) => c.slotIndex === slotIndex && c.pageIndex === currentPage
+      );
+
+      if (existingIndex !== -1) {
+        updated[existingIndex] = newCard; 
+      } else {
+        updated.push(newCard); 
+      }
+
+      return updated;
     });
+  };
+
+  const handleDeleteCard = (cardToDelete) => {
+    setCards(prev =>
+      prev.filter(c =>
+        !(c.id === cardToDelete.id &&
+          c.slotIndex === cardToDelete.slotIndex &&
+          c.pageIndex === cardToDelete.pageIndex)
+      )
+    );
+  };
+
+  const handlePageChange = (pageNum) => {
+    setCurrentPage(pageNum - 1);
   };
 
   const handleTabChange = (key) => {
     setActiveTab(key);
   };
 
-  const handleDeleteCard = (cardToDelete) => {
-    console.log(cardToDelete);
-
-    const cardToDeleteIndex = slots.indexOf(cardToDelete);
-    setSlots((prev) => {
-      const newSlots = [...prev];
-      newSlots[cardToDeleteIndex] = null;
-      return newSlots;
-    });
-  }
+  const handleClearPage = () => {
+    const updatedCards = cards.filter(c => c.pageIndex !== currentPage);
+    setCards(updatedCards);
+  };
 
   const tabItems = [
     {
@@ -92,14 +131,16 @@ const BinderView = () => {
 
   return (
     <Layout>
-      <Header style={{
-        color: '#fff',
-        fontSize: '20px',
-        fontWeight: 'bold',
-        backgroundColor: '#001529',
-        padding: '0 24px',
-        lineHeight: '64px'
-      }}>
+      <Header
+        style={{
+          color: '#fff',
+          fontSize: '20px',
+          fontWeight: 'bold',
+          backgroundColor: '#001529',
+          padding: '0 24px',
+          lineHeight: '64px'
+        }}
+      >
         Pokémon Binder
       </Header>
 
@@ -119,10 +160,40 @@ const BinderView = () => {
                 onChange={handleTabChange}
               />
             </Col>
-            <Col span={12} style={{ height: '100%', padding: 16 }}>
-              <DisplaySection slots={slots} onDelete={handleDeleteCard}/>
+
+            <Col span={8} style={{ height: '100%', padding: 16 }}>
+              <div style={{ marginBottom: 12 }}>
+                <Pagination
+                  defaultCurrent={1}
+                  current={currentPage + 1}
+                  total={NUMBER_OF_PAGES * 9}
+                  showSizeChanger={false}
+                  onChange={handlePageChange}
+                  align="center"
+                />
+              </div>
+              <DisplaySection slots={slots} onDelete={handleDeleteCard} />
             </Col>
-            <Col span={2}/>
+
+            <Col
+              span={4}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                padding: 24,
+                gap: 12 
+              }}
+            >
+              <Button 
+                danger 
+                type='primary'
+                onClick={handleClearPage}
+                icon={<DeleteOutlined />}
+              >
+                Clear current page
+              </Button>
+            </Col>
+            <Col span={2} />
           </Row>
 
           <DragOverlay>
