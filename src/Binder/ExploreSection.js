@@ -32,6 +32,7 @@ const ExploreSection = () => {
     <>
       <Space.Compact style={{ width: '300px' }}>
         <Input
+          spellCheck={false}
           placeholder="Input Pokemon Name"
           value={pokemonName}
           onChange={(e) => setPokemonName(e.target.value)}

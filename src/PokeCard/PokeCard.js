@@ -1,10 +1,27 @@
-import { Card } from 'antd';
+import { useState } from 'react';
+import { Card, Button } from 'antd';
+import { DeleteFilled } from '@ant-design/icons';
 
 import './PokeCard.css';
 
-const PokeCard = ({ card }) => {
+const PokeCard = ({ card, isDisplay, onDelete }) => {
+  const [hovered, setHovered] = useState(false);
+
   return (
-    <>
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {isDisplay && hovered && (
+        <Button 
+          danger
+          size="medium"
+          shape="circle"
+          icon={<DeleteFilled/>}
+          onClick={() => onDelete?.(card)} 
+          className='poke-card-delete-button'
+        />
+      )}      
       <Card
         hoverable
         variant='borderless'
@@ -14,7 +31,7 @@ const PokeCard = ({ card }) => {
         />}
         className='poke-card'
       /> 
-    </>
+    </div>
   );
 }
 

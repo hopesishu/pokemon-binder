@@ -2,12 +2,14 @@ import { useDroppable, useDraggable } from '@dnd-kit/core';
 import PokeCard from '../PokeCard/PokeCard';
 import PokeCardPlaceholder from '../PokeCard/PokeCardPlaceholder';
 
-const DropSlot = ({ id, card }) => {
+const DropSlot = ({ id, card, onDelete }) => {
   const { setNodeRef, isOver } = useDroppable({ id });
 
   return (
     <div ref={setNodeRef}>
-      {card ? <PokeCard card={card}/> : <PokeCardPlaceholder isOver={isOver}/>}
+      {card 
+        ? <PokeCard card={card} isDisplay onDelete={onDelete} /> 
+        : <PokeCardPlaceholder isOver={isOver}/>}
     </div>
   );
 };
