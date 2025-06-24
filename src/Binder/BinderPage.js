@@ -1,5 +1,4 @@
 import { Row, Col } from 'antd';
-
 import DropSlot from '../DragAndDrop/DropSlot';
 
 const BinderPage = ({ slots, onDelete }) => {
@@ -13,7 +12,6 @@ const BinderPage = ({ slots, onDelete }) => {
             </Col>
           ))}
         </Row>
-
       </div>
     </div>
   );

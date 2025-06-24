@@ -4,11 +4,11 @@ import {
   useSensor,
   useSensors,
   PointerSensor,
-  closestCenter,
-  DragOverlay
+  DragOverlay,
+  closestCorners
 } from '@dnd-kit/core';
 
-import { Row, Col, Tabs, Layout, Pagination, Button } from 'antd';
+import { Row, Col, Tabs, Layout, Pagination, Button, Grid } from 'antd';
 import { HeartOutlined, SearchOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import ExploreSection from './ExploreSection';
@@ -17,16 +17,19 @@ import DisplaySection from './DisplaySection';
 import PokeCard from '../PokeCard/PokeCard';
 
 const { Header, Content } = Layout;
+const { useBreakpoint } = Grid;
 
 const SAVED_CARDS_STORAGE_KEY = 'pokemon_binder_cards';
 const NUMBER_OF_PAGES = 5;
 const NUMBER_OF_SLOTS = 9;
 
 const BinderView = () => {
+  const screens = useBreakpoint();
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, 
+        distance: 8,
       },
     })
   );
@@ -42,8 +45,20 @@ const BinderView = () => {
 
   useEffect(() => {
     localStorage.setItem(SAVED_CARDS_STORAGE_KEY, JSON.stringify(cards));
-    console.log("cards", cards)
   }, [cards]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'ArrowLeft' && currentPage > 0) {
+        setCurrentPage((prev) => prev - 1);
+      } else if (event.key === 'ArrowRight' && currentPage < NUMBER_OF_PAGES - 1) {
+        setCurrentPage((prev) => prev + 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage]);
 
   const getSlotsForPage = (pageIndex) => {
     const slots = Array(NUMBER_OF_SLOTS).fill(null);
@@ -82,9 +97,9 @@ const BinderView = () => {
       );
 
       if (existingIndex !== -1) {
-        updated[existingIndex] = newCard; 
+        updated[existingIndex] = newCard;
       } else {
-        updated.push(newCard); 
+        updated.push(newCard);
       }
 
       return updated;
@@ -130,7 +145,7 @@ const BinderView = () => {
   ];
 
   return (
-    <Layout>
+    <Layout style={{ height: '100vh' }}>
       <Header
         style={{
           color: '#fff',
@@ -146,54 +161,47 @@ const BinderView = () => {
 
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <Content style={{ height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
-          <Row style={{ height: '100%' }}>
-            <Col span={10} style={{ height: '100%', padding: 16 }}>
+        <Content style={{ overflowY: 'auto', padding: 16}}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={10}>
               <Tabs
-                tabPosition='left'
+                tabPosition={screens.md ? 'left' : 'top'}
                 defaultActiveKey={activeTab}
-                items={tabItems}
+                activeKey={activeTab}
                 onChange={handleTabChange}
+                items={tabItems}
               />
             </Col>
 
-            <Col span={8} style={{ height: '100%', padding: 16 }}>
-              <div style={{ marginBottom: 12 }}>
+            <Col xs={24} md={10}>
+              <div style={{ textAlign: 'center', marginBottom: 12 }}>
                 <Pagination
-                  defaultCurrent={1}
+                  align='center'
                   current={currentPage + 1}
                   total={NUMBER_OF_PAGES * 9}
                   showSizeChanger={false}
                   onChange={handlePageChange}
-                  align="center"
                 />
               </div>
+
               <DisplaySection slots={slots} onDelete={handleDeleteCard} />
             </Col>
 
-            <Col
-              span={4}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: 24,
-                gap: 12 
-              }}
-            >
-              <Button 
-                danger 
-                type='primary'
+            <Col xs={24} md={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+              <Button
+                danger
+                type="primary"
                 onClick={handleClearPage}
                 icon={<DeleteOutlined />}
+                block={!screens.md}
               >
-                Clear current page
+                Clear Page
               </Button>
             </Col>
-            <Col span={2} />
           </Row>
 
           <DragOverlay>

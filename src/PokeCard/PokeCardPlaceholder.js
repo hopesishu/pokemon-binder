@@ -1,10 +1,9 @@
 import { Card } from 'antd';
-
 import './PokeCard.css';
 
 const PokeCardPlaceholder = ({ isOver }) => {
   return (
-    <>
+    <div className='poke-card-container'>
       <Card
         variant='borderless'
         className={`poke-card-placeholder ${isOver ? 'over' : ''}`}
@@ -14,7 +13,7 @@ const PokeCardPlaceholder = ({ isOver }) => {
           alt={"Placeholder"} 
         />}
       />
-    </>
+    </div>
   );
 }
 

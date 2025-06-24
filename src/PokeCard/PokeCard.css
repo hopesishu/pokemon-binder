@@ -17,9 +17,22 @@
   align-items: center;
 }
 
+.poke-card-container {
+  position: relative;
+  display: inline-block;
+}
+
 .poke-card-delete-button {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 10;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.poke-card-container:hover .poke-card-delete-button {
+  opacity: 1;
 }
