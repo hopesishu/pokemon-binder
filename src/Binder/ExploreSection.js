@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Flex, Typography, Input, Select, Row, Col, Spin } from 'antd';
 
 import DraggableCard from '../DragAndDrop/DraggableCard';
@@ -11,6 +11,7 @@ const ExploreSection = () => {
   const [rarity, setRarity] = useState('all');
   const [rarityList, setRarityList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const selectRef = useRef(null);
 
   useEffect(() => {
     const getRarityList = async () => {
@@ -67,19 +68,17 @@ const ExploreSection = () => {
     }
   };
 
-  useEffect(() => {
-    if (pokemonName.trim() || rarity !== 'all') {
-      fetchCards(pokemonName.trim(), rarity);
-    }
-  }, [rarity]);
-
   const handleSearchChange = () => {
     fetchCards(pokemonName, rarity);
   };
 
   const handleRaritySelectChange = (value) => {
+    if (selectRef.current) {
+      selectRef.current.blur();
+    }
+
     setRarity(value);
-    fetchCards(pokemonName, rarity);
+    fetchCards(pokemonName, value);
   };
 
   return (
@@ -100,6 +99,7 @@ const ExploreSection = () => {
         <Flex style={{ flexDirection: 'column', width: 200 }}>
           <Text strong>Select rarity</Text>
           <Select
+            ref={selectRef}          
             defaultValue='all'
             showSearch
             placeholder='Select rarity'
@@ -113,17 +113,19 @@ const ExploreSection = () => {
       </Flex>
 
       <div 
-      className="custom-scrollbar" 
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        overflowY: cards.length > 0 ? 'scroll' : 'auto',
-        overflowX: 'hidden',
-        maxHeight: 'calc(100vh - 200px)',
-        paddingRight: '8px',
+        className='custom-scrollbar'
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          overflowY: cards.length > 0 ? 'scroll' : 'auto',
+          overscrollBehavior: 'contain',
+          overflowX: 'hidden',
+          minHeight: 'calc(100vh - 200px)',
+          maxHeight: 'calc(100vh - 200px)',
+          paddingRight: '8px',
       }}>
         <div style={{ width: '100%' }}>
-          <Row gutter={[8, 8]} justify="center">
+          <Row gutter={[8, 8]} justify='center'>
             {loading
               ? 
               <Spin tip="Loading"> 
@@ -131,19 +133,19 @@ const ExploreSection = () => {
               </Spin>
               : cards.length > 0
               ? cards.map(card => (
-                  <Col
-                    key={card.id}
-                    xs={12}     // 2 per row on mobile
-                    sm={8}      // 3 per row on small screens
-                    md={8}      // 3 per row on medium screens
-                    lg={6}      // 4 per row on large screens
-                    xl={6}      // 4 per row on extra-large screens
-                  >
-                    <DraggableCard card={card} />
-                  </Col>
+                <Col
+                  key={card.id}
+                  xs={12}     // 2 per row on mobile
+                  sm={8}      // 3 per row on small screens
+                  md={8}      // 3 per row on medium screens
+                  lg={6}      // 4 per row on large screens
+                  xl={6}      // 4 per row on extra-large screens
+                >
+                  <DraggableCard card={card} />
+                </Col>
                 ))
               : (
-                <Text>No data found</Text>
+                <Text type="secondary">No data found</Text>
               )}
           </Row>
         </div>

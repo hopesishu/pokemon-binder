@@ -14,5 +14,4 @@ const DropSlot = ({ id, card, onDelete }) => {
   );
 };
 
-
 export default DropSlot;

@@ -5,7 +5,7 @@ import {
   useSensors,
   PointerSensor,
   DragOverlay,
-  closestCorners
+  rectIntersection
 } from '@dnd-kit/core';
 
 import { Row, Col, Tabs, Layout, Pagination, Button, Grid } from 'antd';
@@ -25,20 +25,12 @@ const NUMBER_OF_SLOTS = 9;
 
 const BinderView = () => {
   const screens = useBreakpoint();
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    })
-  );
+  const sensors = useSensors(useSensor(PointerSensor));
 
   const [cards, setCards] = useState(() => {
     const savedCards = localStorage.getItem(SAVED_CARDS_STORAGE_KEY);
     return savedCards ? JSON.parse(savedCards) : [];
   });
-
   const [currentPage, setCurrentPage] = useState(0);
   const [activeCard, setActiveCard] = useState(null);
   const [activeTab, setActiveTab] = useState('explore-section');
@@ -161,11 +153,12 @@ const BinderView = () => {
 
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={rectIntersection}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        autoScroll={false}
       >
-        <Content style={{ overflowY: 'auto', padding: 16}}>
+        <Content style={{ overflowY: 'auto', padding: 16 }}>
           <Row gutter={[16, 16]}>
             <Col xs={24} md={10}>
               <Tabs
