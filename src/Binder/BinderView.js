@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import {
   DndContext,
   useSensor,
@@ -25,7 +26,13 @@ const NUMBER_OF_SLOTS = 9;
 
 const BinderView = () => {
   const screens = useBreakpoint();
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 2,
+      },
+    })
+  );
 
   const [cards, setCards] = useState(() => {
     const savedCards = localStorage.getItem(SAVED_CARDS_STORAGE_KEY);
@@ -69,43 +76,64 @@ const BinderView = () => {
   };
 
   const handleDragEnd = (event) => {
-    setActiveCard(null);
     const { active, over } = event;
-    if (!over) return;
+    setActiveCard(null);
+    if (!over || !active) return;
 
-    const slotIndex = parseInt(over.id.replace('slot-', ''), 10);
-    const card = active.data.current.card;
+    const fromSlot = parseInt(active.id.replace('slot-', ''), 10);
+    const toSlot = parseInt(over.id.replace('slot-', ''), 10);
+    if (isNaN(toSlot)) return;
 
-    const newCard = {
-      ...card,
-      slotIndex,
-      pageIndex: currentPage
-    };
+    const draggedCard = active.data.current.card;
+    // If the card is from the binder (no valid uniqueId). Move within binder
+    if (draggedCard.uniqueId !== undefined) {
+      setCards((prev) => {
+        const updated = [...prev];
 
-    setCards((prevCards) => {
-      const updated = [...prevCards];
-      const existingIndex = updated.findIndex(
-        (c) => c.slotIndex === slotIndex && c.pageIndex === currentPage
-      );
+        const updatedCards = updated.map((card) => {
+          // Move the dragged card
+          if (card.uniqueId === draggedCard.uniqueId) {
+            return { ...card, slotIndex: toSlot };
+          }
+          // Move the card in destination slot (if exists) to source slot
+          if (card.slotIndex === toSlot && card.pageIndex === currentPage) {
+            return { ...card, slotIndex: fromSlot };
+          }
+          return card;
+        });
 
-      if (existingIndex !== -1) {
-        updated[existingIndex] = newCard;
-      } else {
-        updated.push(newCard);
-      }
+        return updatedCards;
+      });
+    } else {
+      // Card is coming from Explore section
+      const newCard = {
+        uniqueId: uuidv4(),
+        ...draggedCard,
+        slotIndex: toSlot,
+        pageIndex: currentPage,
+      };
 
-      return updated;
-    });
+      setCards((prevCards) => {
+        const updated = [...prevCards];
+        const existingIndex = updated.findIndex(
+          (c) => c.slotIndex === toSlot && c.pageIndex === currentPage
+        );
+
+        if (existingIndex !== -1) {
+          updated[existingIndex] = newCard;
+        } else {
+          updated.push(newCard);
+        }
+
+        return updated;
+      });
+    }
   };
 
   const handleDeleteCard = (cardToDelete) => {
-    setCards(prev =>
-      prev.filter(c =>
-        !(c.id === cardToDelete.id &&
-          c.slotIndex === cardToDelete.slotIndex &&
-          c.pageIndex === cardToDelete.pageIndex)
-      )
-    );
+    setCards(prev => {
+      return prev.filter(c => c.uniqueId !== cardToDelete.uniqueId);
+    });
   };
 
   const handlePageChange = (pageNum) => {
@@ -181,13 +209,13 @@ const BinderView = () => {
                 />
               </div>
 
-              <DisplaySection slots={slots} onDelete={handleDeleteCard} />
+              <DisplaySection activeCard={activeCard} slots={slots} onDelete={handleDeleteCard} />
             </Col>
 
             <Col xs={24} md={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
               <Button
                 danger
-                type="primary"
+                type='primary'
                 onClick={handleClearPage}
                 icon={<DeleteOutlined />}
                 block={!screens.md}
