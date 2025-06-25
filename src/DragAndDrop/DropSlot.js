@@ -1,4 +1,4 @@
-import { useDroppable, useDraggable } from '@dnd-kit/core';
+import { useDroppable } from '@dnd-kit/core';
 import PokeCard from '../PokeCard/PokeCard';
 import PokeCardPlaceholder from '../PokeCard/PokeCardPlaceholder';
 

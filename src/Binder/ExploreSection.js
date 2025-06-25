@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Flex, Typography, Input, Select, Row, Col, Skeleton } from 'antd';
+import { Flex, Typography, Input, Select, Row, Col, Spin } from 'antd';
 
 import DraggableCard from '../DragAndDrop/DraggableCard';
 
@@ -61,6 +61,7 @@ const ExploreSection = () => {
       }
     } catch (err) {
       console.error('Failed to fetch cards:', err);
+      setCards([]);
     } finally {
       setLoading(false);
     }
@@ -79,7 +80,6 @@ const ExploreSection = () => {
   const handleRaritySelectChange = (value) => {
     setRarity(value);
     fetchCards(pokemonName, rarity);
-    document.activeElement.blur();
   };
 
   return (
@@ -125,23 +125,10 @@ const ExploreSection = () => {
         <div style={{ width: '100%' }}>
           <Row gutter={[8, 8]} justify="center">
             {loading
-              ? Array.from({ length: 8 }).map((_, index) => (
-                  <Col
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                    key={`skeleton-${index}`}
-                    xs={12}     // 2 per row on mobile
-                    sm={8}      // 3 per row on small screens
-                    md={8}      // 3 per row on medium screens
-                    lg={6}      // 4 per row on large screens
-                    xl={6}      // 4 per row on extra-large screens
-                  >
-                    <Skeleton.Image active style={{ width: '100%', height: '100%' }} />
-                  </Col>
-                ))
+              ? 
+              <Spin tip="Loading"> 
+                <div style={{ padding: 50 }} />
+              </Spin>
               : cards.length > 0
               ? cards.map(card => (
                   <Col
