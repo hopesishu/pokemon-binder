@@ -118,7 +118,6 @@ const ExploreSection = () => {
           display: 'flex',
           justifyContent: 'center',
           overflowY: cards.length > 0 ? 'scroll' : 'auto',
-          overscrollBehavior: 'contain',
           overflowX: 'hidden',
           minHeight: 'calc(100vh - 200px)',
           maxHeight: 'calc(100vh - 200px)',
