@@ -13,7 +13,6 @@ const BinderPage = ({ activeCard, slots, onDelete }) => {
                   id={`slot-${index}`}
                   card={card}
                   onDelete={onDelete}
-                  // hideCard={activeCard?.slotIndex === index}
                   hideCard={activeCard?.uniqueId === card?.uniqueId}
                 />
             </Col>

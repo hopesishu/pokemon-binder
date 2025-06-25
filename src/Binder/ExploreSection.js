@@ -112,7 +112,7 @@ const ExploreSection = () => {
         </Flex>
       </Flex>
 
-      <div 
+      <div
         className='custom-scrollbar'
         style={{
           display: 'flex',
