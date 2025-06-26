@@ -5,13 +5,20 @@ import DraggableCard from '../DragAndDrop/DraggableCard';
 
 const { Text } = Typography;
 
+const DEFAULT_VISIBLE_COUNT = 52;
+
 const ExploreSection = () => {
   const [allCards, setAllCards] = useState([]);
-  const [visibleCardCount, setVisibleCardCount] = useState(52);
+  const [visibleCardCount, setVisibleCardCount] = useState(DEFAULT_VISIBLE_COUNT);
+
+  const [rarityList, setRarityList] = useState([]);
+  const [pokemonTypeList, setPokemonTypeList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [pokemonName, setPokemonName] = useState('');
   const [rarity, setRarity] = useState('all');
-  const [rarityList, setRarityList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [pokemonType, setPokemonType] = useState('all');
+
   const selectRef = useRef(null);
 
   useEffect(() => {
@@ -27,19 +34,37 @@ const ExploreSection = () => {
       }
     };
 
+    const getPokemonTypeList = async() => {
+      try {
+        const response = await fetch('https://api.tcgdex.net/v2/en/types');
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+        setPokemonTypeList(data);
+      } catch (error) {
+        console.error('Error fetching Pokemon type list:', error);
+      }
+    }
+
     getRarityList();
+    getPokemonTypeList();
   }, []);
 
-  const fetchCards = async (name, rarity) => {
-    setLoading(true);
+  const fetchCards = async (pokemonName, rarity, pokemonType) => {
+    setIsLoading(true);
+    setVisibleCardCount(DEFAULT_VISIBLE_COUNT);
     const params = new URLSearchParams();
 
-    if (name) {
-      params.set('name', name);
+    if (pokemonName) {
+      params.set('name', pokemonName);
     }
 
     if (rarity && rarity !== 'all') {
       params.set('rarity', rarity);
+    }
+
+    if (pokemonType && pokemonType !== 'all') {
+      params.set('types', pokemonType);
     }
 
     try {
@@ -64,25 +89,36 @@ const ExploreSection = () => {
       console.error('Failed to fetch cards:', err);
       setAllCards([]);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const handleSearchChange = () => {
-    fetchCards(pokemonName, rarity);
+    fetchCards(pokemonName, rarity, pokemonType);
   };
 
   const handleRaritySelectChange = (value) => {
+    const raritySelected = value;
     if (selectRef.current) {
       selectRef.current.blur();
     }
 
     setRarity(value);
-    fetchCards(pokemonName, value);
+    fetchCards(pokemonName, raritySelected, pokemonType);
+  };
+
+  const handlePokemonTypeSelectChange = (value) => {
+    const pokemonTypeSelected = value;
+    if (selectRef.current) {
+      selectRef.current.blur();
+    }
+
+    setPokemonType(pokemonTypeSelected);
+    fetchCards(pokemonName, rarity, pokemonTypeSelected);
   };
 
   const handleShowMore = () => {
-    const newCount = visibleCardCount + 52;
+    const newCount = visibleCardCount + DEFAULT_VISIBLE_COUNT;
     setVisibleCardCount(newCount);
   }
 
@@ -116,6 +152,20 @@ const ExploreSection = () => {
             ]}
           />
         </Col>
+        <Col xs={24} sm={8}>
+          <Text strong>Type</Text>
+          <Select
+            ref={selectRef}
+            placeholder='Select type'
+            showSearch
+            style={{ width: '100%' }}
+            onChange={handlePokemonTypeSelectChange}
+            options={[
+              { value: 'all', label: 'All' },
+              ...pokemonTypeList.map(type => ({ value: type, label: type })),
+            ]}
+          />
+        </Col>
       </Row>
 
       <div
@@ -125,13 +175,13 @@ const ExploreSection = () => {
           justifyContent: 'center',
           overflowY: visibleCards.length > 0 ? 'scroll' : 'auto',
           overflowX: 'hidden',
-          minHeight: 'calc(100vh - 200px)',
-          maxHeight: 'calc(100vh - 200px)',
+          minHeight: 'calc(100vh - 260px)',
+          maxHeight: 'calc(100vh - 260px)',
           paddingRight: '8px',
       }}>
         <div style={{ width: '100%' }}>
           <Row gutter={[8, 8]} justify='center'>
-            {loading
+            {isLoading
               ? 
               <Spin tip="Loading"> 
                 <div style={{ padding: 50 }} />
@@ -154,7 +204,7 @@ const ExploreSection = () => {
               )}
           </Row>
           <Row justify='center'>
-            {visibleCards.length < allCards.length && (
+            {visibleCards.length < allCards.length && !isLoading && (
               <Button type='link' onClick={handleShowMore}>Show more cards</Button>
             )}
           </Row>
