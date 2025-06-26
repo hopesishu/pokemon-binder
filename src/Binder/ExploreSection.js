@@ -48,6 +48,7 @@ const ExploreSection = () => {
 
     getRarityList();
     getPokemonTypeList();
+    fetchCards(pokemonName, rarity, pokemonType);
   }, []);
 
   const fetchCards = async (pokemonName, rarity, pokemonType) => {
