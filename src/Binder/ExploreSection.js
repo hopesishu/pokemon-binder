@@ -120,6 +120,10 @@ const ExploreSection = () => {
     setVisibleCardCount(newCount);
   }
 
+  const capitalizeWords = (str) => {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+  }
+
   const visibleCards = allCards.slice(0, visibleCardCount);
 
   return (
@@ -146,7 +150,7 @@ const ExploreSection = () => {
             onChange={handleRaritySelectChange}
             options={[
               { value: 'all', label: 'All' },
-              ...rarityList.map(rarity => ({ value: rarity, label: rarity })),
+              ...rarityList.map(rarity => ({ value: rarity, label: capitalizeWords(rarity) })),
             ]}
           />
         </Col>
@@ -216,9 +220,14 @@ const ExploreSection = () => {
               )}
           </Row>
           <Row justify='center'>
-            {visibleCards.length < allCards.length && !isLoading && (
-              <Button type='link' onClick={handleShowMore}>Show more cards</Button>
-            )}
+            {visibleCards.length < allCards.length && !isLoading  
+              ? 
+              <Button type='link' onClick={handleShowMore}>
+                {`Show more cards (${visibleCardCount}/${allCards.length} shown)`}
+              </Button>
+              : allCards.length > 0 ? <Text type="secondary">All cards displayed</Text>
+              : null
+            }
           </Row>
         </div>
       </div>
