@@ -8,7 +8,7 @@ const PokeCardPlaceholder = ({ isOver }) => {
         variant='borderless'
         className={`poke-card-placeholder ${isOver ? 'over' : ''}`}
         cover={<img 
-          src="https://assets.tcgdex.net/en/sv/sv09/135/low.png" 
+          src="https://assets.tcgdex.net/en/sv/sv09/135/low.webp" 
           style={{ visibility: 'hidden' }}
           alt={"Placeholder"} 
         />}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Flex, Typography, Input, Select, Row, Col, Spin, Button } from 'antd';
-
+import { Flex, Typography, Input, Select, Row, Col, Spin, Button, Tooltip } from 'antd';
+import { PokemonTypeIconImg } from '../assets/pokmon-type-icons/PokemonTypeIcons';
 import DraggableCard from '../DragAndDrop/DraggableCard';
 
 const { Text } = Typography;
@@ -17,7 +17,7 @@ const ExploreSection = () => {
 
   const [pokemonName, setPokemonName] = useState('');
   const [rarity, setRarity] = useState('all');
-  const [pokemonType, setPokemonType] = useState('all');
+  const [pokemonType, setPokemonType] = useState(null);
 
   const selectRef = useRef(null);
 
@@ -41,6 +41,7 @@ const ExploreSection = () => {
 
         const data = await response.json();
         setPokemonTypeList(data);
+        console.log("PokemonTypeList", data)
       } catch (error) {
         console.error('Error fetching Pokemon type list:', error);
       }
@@ -107,15 +108,11 @@ const ExploreSection = () => {
     fetchCards(pokemonName, raritySelected, pokemonType);
   };
 
-  const handlePokemonTypeSelectChange = (value) => {
-    const pokemonTypeSelected = value;
-    if (selectRef.current) {
-      selectRef.current.blur();
-    }
-
-    setPokemonType(pokemonTypeSelected);
-    fetchCards(pokemonName, rarity, pokemonTypeSelected);
-  };
+  const handlePokemonTypeToggle = (value) => {
+    if (value === pokemonType) return;
+    setPokemonType((prev) => (prev === value ? null : value));
+    fetchCards(pokemonName, rarity, value);
+  }
 
   const handleShowMore = () => {
     const newCount = visibleCardCount + DEFAULT_VISIBLE_COUNT;
@@ -152,19 +149,33 @@ const ExploreSection = () => {
             ]}
           />
         </Col>
-        <Col xs={24} sm={8}>
-          <Text strong>Type</Text>
-          <Select
-            ref={selectRef}
-            placeholder='Select type'
-            showSearch
-            style={{ width: '100%' }}
-            onChange={handlePokemonTypeSelectChange}
-            options={[
-              { value: 'all', label: 'All' },
-              ...pokemonTypeList.map(type => ({ value: type, label: type })),
-            ]}
-          />
+      </Row>
+      <Row gutter={[16, 16]} style={{ maxWidth: 800, width: '100%' }}>
+        <Col xs={24} sm={24}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Text strong>Filter by Energy</Text>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+              {pokemonTypeList.map(type => {
+                const isSelected = pokemonType === type;
+                return (
+                  <Tooltip title={type}>
+                    <Button 
+                      style={{
+                        padding: 4,
+                        border: isSelected ? '2px solid #1890ff' : '2px solid lightgray',
+                        background: isSelected ? '#e6f7ff' : 'transparent',
+                        width: 32,
+                        height: 32,
+                      }}
+                      key={type} 
+                      onClick={() => handlePokemonTypeToggle(type)}
+                    >
+                      <PokemonTypeIconImg pokemonType={type} />
+                    </Button>
+                  </Tooltip>)}
+              )}
+            </div>
+          </div>
         </Col>
       </Row>
 

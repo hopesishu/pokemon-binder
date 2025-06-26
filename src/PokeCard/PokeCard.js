@@ -22,7 +22,7 @@ const PokeCard = ({ card, isInDisplaySection, onDelete }) => {
       <Card
         hoverable
         variant='borderless'
-        cover={<img alt={card.name} src={`${card.image}/low.png`} />}
+        cover={<img alt={card.name} src={`${card.image}/low.webp`} />}
         className='poke-card'
       />
     </div>
