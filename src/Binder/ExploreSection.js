@@ -41,7 +41,6 @@ const ExploreSection = () => {
 
         const data = await response.json();
         setPokemonTypeList(data);
-        console.log("PokemonTypeList", data)
       } catch (error) {
         console.error('Error fetching Pokemon type list:', error);
       }
@@ -64,8 +63,10 @@ const ExploreSection = () => {
       params.set('rarity', rarity);
     }
 
-    if (pokemonType && pokemonType !== 'all') {
+    if (pokemonType) {
       params.set('types', pokemonType);
+    } else {
+      params.delete('types');
     }
 
     try {
@@ -108,10 +109,10 @@ const ExploreSection = () => {
     fetchCards(pokemonName, raritySelected, pokemonType);
   };
 
-  const handlePokemonTypeToggle = (value) => {
-    if (value === pokemonType) return;
-    setPokemonType((prev) => (prev === value ? null : value));
-    fetchCards(pokemonName, rarity, value);
+  const handlePokemonTypeToggle = (type) => {
+    const newType = pokemonType === type ? null : type;
+    setPokemonType(newType);
+    fetchCards(pokemonName, rarity, newType);
   }
 
   const handleShowMore = () => {
