@@ -220,13 +220,10 @@ const ExploreSection = () => {
               )}
           </Row>
           <Row justify='center'>
-            {visibleCards.length < allCards.length && !isLoading  
-              ? 
+            {visibleCards.length < allCards.length && !isLoading &&
               <Button type='link' onClick={handleShowMore}>
                 {`Show more cards (${visibleCardCount}/${allCards.length} shown)`}
               </Button>
-              : allCards.length > 0 ? <Text type="secondary">All cards displayed</Text>
-              : null
             }
           </Row>
         </div>
