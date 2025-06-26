@@ -190,7 +190,7 @@ const BinderView = () => {
           <Row gutter={[16, 16]}>
             <Col xs={24} md={10}>
               <Tabs
-                tabPosition={screens.md ? 'left' : 'top'}
+                tabPosition={screens.lg ? 'left' : 'top'}
                 defaultActiveKey={activeTab}
                 activeKey={activeTab}
                 onChange={handleTabChange}

@@ -23,7 +23,7 @@ const DropSlot = ({ id, card, onDelete, hideCard = false }) => {
     <div ref={dropRef}>
       {card 
         ? (<div style={style} ref={dragRef} {...listeners} {...attributes}>
-            <PokeCard card={card} isDisplay onDelete={onDelete} />
+            <PokeCard card={card} isInDisplaySection onDelete={onDelete} />
           </div>) 
         : <PokeCardPlaceholder isOver={isOver}/>}
     </div>

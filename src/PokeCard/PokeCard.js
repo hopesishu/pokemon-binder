@@ -2,11 +2,11 @@ import { Card, Button, Tooltip } from 'antd';
 import { DeleteFilled } from '@ant-design/icons';
 import './PokeCard.css';
 
-const PokeCard = ({ card, isDisplay, onDelete }) => {
+const PokeCard = ({ card, isInDisplaySection, onDelete }) => {
   return (
     <div className='poke-card-container'>
-      {isDisplay && (
-        <Tooltip title="Remove card">
+      {isInDisplaySection && (
+        <Tooltip title='Remove card'>
           <Button 
             danger
             type="text"

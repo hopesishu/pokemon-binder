@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { Flex, Typography, Input, Select, Row, Col, Spin } from 'antd';
+import { Flex, Typography, Input, Select, Row, Col, Spin, Button } from 'antd';
 
 import DraggableCard from '../DragAndDrop/DraggableCard';
 
 const { Text } = Typography;
 
 const ExploreSection = () => {
-  const [cards, setCards] = useState([]);
+  const [allCards, setAllCards] = useState([]);
+  const [visibleCardCount, setVisibleCardCount] = useState(52);
   const [pokemonName, setPokemonName] = useState('');
   const [rarity, setRarity] = useState('all');
   const [rarityList, setRarityList] = useState([]);
@@ -42,7 +43,7 @@ const ExploreSection = () => {
     }
 
     try {
-      console.log('params used', params.toString());
+      console.log('Params used', params.toString());
       const response = await fetch(`https://api.tcgdex.net/v2/en/cards?${params.toString()}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -54,15 +55,14 @@ const ExploreSection = () => {
       );
 
       if (filteredData.length > 0) {
-        console.log('filteredData', filteredData);
-        setCards(filteredData);
+        setAllCards(filteredData);
       } else {
-        console.log('no data found');
-        setCards([]);
+        console.log('No data found');
+        setAllCards([]);
       }
     } catch (err) {
       console.error('Failed to fetch cards:', err);
-      setCards([]);
+      setAllCards([]);
     } finally {
       setLoading(false);
     }
@@ -81,10 +81,17 @@ const ExploreSection = () => {
     fetchCards(pokemonName, value);
   };
 
+  const handleShowMore = () => {
+    const newCount = visibleCardCount + 52;
+    setVisibleCardCount(newCount);
+  }
+
+  const visibleCards = allCards.slice(0, visibleCardCount);
+
   return (
     <Flex vertical gap={12}>
-      <Flex gap={16} align='flex-end' style={{ maxWidth: 800, width: '100%' }}>
-        <Flex style={{ flex: 1, flexDirection: 'column' }}>
+      <Row gutter={[16, 16]} style={{ maxWidth: 800, width: '100%' }}>
+        <Col xs={24} sm={16}>
           <Text strong>Search for Pokémon</Text>
           <Input.Search 
             spellCheck={false}
@@ -94,30 +101,29 @@ const ExploreSection = () => {
             onPressEnter={handleSearchChange}
             onSearch={handleSearchChange}
           />
-        </Flex>
-
-        <Flex style={{ flexDirection: 'column', width: 200 }}>
-          <Text strong>Select rarity</Text>
+        </Col>
+        <Col xs={24} sm={8}>
+          <Text strong>Rarity</Text>
           <Select
-            ref={selectRef}          
-            defaultValue='all'
-            showSearch
+            ref={selectRef}
             placeholder='Select rarity'
+            showSearch
+            style={{ width: '100%' }}
             onChange={handleRaritySelectChange}
             options={[
               { value: 'all', label: 'All' },
               ...rarityList.map(rarity => ({ value: rarity, label: rarity })),
             ]}
           />
-        </Flex>
-      </Flex>
+        </Col>
+      </Row>
 
       <div
         className='custom-scrollbar'
         style={{
           display: 'flex',
           justifyContent: 'center',
-          overflowY: cards.length > 0 ? 'scroll' : 'auto',
+          overflowY: visibleCards.length > 0 ? 'scroll' : 'auto',
           overflowX: 'hidden',
           minHeight: 'calc(100vh - 200px)',
           maxHeight: 'calc(100vh - 200px)',
@@ -130,8 +136,8 @@ const ExploreSection = () => {
               <Spin tip="Loading"> 
                 <div style={{ padding: 50 }} />
               </Spin>
-              : cards.length > 0
-              ? cards.map(card => (
+              : visibleCards.length > 0
+              ? visibleCards.map(card => (
                 <Col
                   key={card.id}
                   xs={12}     // 2 per row on mobile
@@ -146,6 +152,11 @@ const ExploreSection = () => {
               : (
                 <Text type="secondary">No data found</Text>
               )}
+          </Row>
+          <Row justify='center'>
+            {visibleCards.length < allCards.length && (
+              <Button type='link' onClick={handleShowMore}>Show more cards</Button>
+            )}
           </Row>
         </div>
       </div>
