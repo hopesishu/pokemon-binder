@@ -1,6 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-
 import PokeCard from '../PokeCard/PokeCard';
 
 const DraggableCard = ({ card }) => {

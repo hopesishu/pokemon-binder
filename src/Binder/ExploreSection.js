@@ -71,8 +71,9 @@ const ExploreSection = () => {
     }
 
     try {
-      console.log('Params used', params.toString());
       const response = await fetch(`https://api.tcgdex.net/v2/en/cards?${params.toString()}`);
+      console.log('Params used:', params.toString());
+      console.log(`api call: https://api.tcgdex.net/v2/en/cards?${params.toString()}`)
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -129,8 +130,8 @@ const ExploreSection = () => {
 
   return (
     <Flex vertical gap={12}>
-      <Row gutter={[16, 16]} style={{ maxWidth: 800, width: '100%' }}>
-        <Col xs={24} sm={16}>
+      <Row gutter={[8, 8]} style={{ maxWidth: 800, width: '100%' }}>
+        <Col xs={24} lg={16}>
           <Text strong>Search for Pokémon</Text>
           <Input.Search 
             spellCheck={false}
@@ -141,7 +142,7 @@ const ExploreSection = () => {
             onSearch={handleSearchChange}
           />
         </Col>
-        <Col xs={24} sm={8}>
+        <Col xs={24} lg={8}>
           <Text strong>Rarity</Text>
           <Select
             ref={selectRef}
@@ -157,14 +158,14 @@ const ExploreSection = () => {
         </Col>
       </Row>
       <Row gutter={[16, 16]} style={{ maxWidth: 800, width: '100%' }}>
-        <Col xs={24} sm={24}>
+        <Col xs={24} lg={24}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Text strong>Filter by Energy</Text>
-            <div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row', gap: 4 }}>
               {pokemonTypeList.map(type => {
                 const isSelected = pokemonType === type;
                 return (
-                  <Tooltip title={type}>
+                  <Tooltip title={type} key={type}>
                     <Button 
                       style={{
                         padding: 4,
@@ -210,7 +211,7 @@ const ExploreSection = () => {
                   xs={12}     // 2 per row on mobile
                   sm={8}      // 3 per row on small screens
                   md={8}      // 3 per row on medium screens
-                  lg={6}      // 4 per row on large screens
+                  lg={8}      // 3 per row on large screens
                   xl={6}      // 4 per row on extra-large screens
                 >
                   <DraggableCard card={card} />

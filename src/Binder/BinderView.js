@@ -188,7 +188,7 @@ const BinderView = () => {
       >
         <Content style={{ overflowY: 'auto', padding: 16 }}>
           <Row gutter={[16, 16]}>
-            <Col xs={24} md={10}>
+            <Col xs={24} lg={10}>
               <Tabs
                 tabPosition={screens.lg ? 'left' : 'top'}
                 defaultActiveKey={activeTab}
@@ -198,7 +198,7 @@ const BinderView = () => {
               />
             </Col>
 
-            <Col xs={24} md={10}>
+            <Col xs={24} lg={10}>
               <div style={{ textAlign: 'center', marginBottom: 12 }}>
                 <Pagination
                   align='center'
@@ -212,7 +212,7 @@ const BinderView = () => {
               <DisplaySection activeCard={activeCard} slots={slots} onDelete={handleDeleteCard} />
             </Col>
 
-            <Col xs={24} md={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+            <Col xs={24} lg={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
               <Button
                 danger
                 type='primary'
