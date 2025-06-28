@@ -2,7 +2,7 @@ import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import PokeCard from '../PokeCard/PokeCard';
 
-const DraggableCard = ({ card }) => {
+const DraggableCard = ({ card, onFavourite, favouritedCards }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: card.id,
     data: { card },
@@ -15,7 +15,7 @@ const DraggableCard = ({ card }) => {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <PokeCard card={card} />
+      <PokeCard card={card} onFavourite={onFavourite} favouritedCards={favouritedCards} />
     </div>
   );
 };

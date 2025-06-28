@@ -7,7 +7,7 @@ const { Text } = Typography;
 
 const DEFAULT_VISIBLE_COUNT = 52;
 
-const ExploreSection = () => {
+const ExploreSection = ({ onFavourite, favouritedCards }) => {
   const [allCards, setAllCards] = useState([]);
   const [visibleCardCount, setVisibleCardCount] = useState(DEFAULT_VISIBLE_COUNT);
 
@@ -214,7 +214,7 @@ const ExploreSection = () => {
                   lg={8}      // 3 per row on large screens
                   xl={6}      // 4 per row on extra-large screens
                 >
-                  <DraggableCard card={card} />
+                  <DraggableCard card={card} onFavourite={onFavourite} favouritedCards={favouritedCards} />
                 </Col>
                 ))
               : (

@@ -21,6 +21,7 @@ const { Header, Content } = Layout;
 const { useBreakpoint } = Grid;
 
 const SAVED_CARDS_STORAGE_KEY = 'pokemon_binder_cards';
+const FAVOURITED_CARDS_STORAGE_KEY = 'favourited_pokemon_cards';
 const NUMBER_OF_PAGES = 5;
 const NUMBER_OF_SLOTS = 9;
 
@@ -34,17 +35,23 @@ const BinderView = () => {
     })
   );
 
-  const [cards, setCards] = useState(() => {
-    const savedCards = localStorage.getItem(SAVED_CARDS_STORAGE_KEY);
-    return savedCards ? JSON.parse(savedCards) : [];
+  const [savedCards, setSavedCards] = useState(() => {
+    const saved = localStorage.getItem(SAVED_CARDS_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [favouritedCards, setFavouritedCards] = useState(() => {
+    const favCards = localStorage.getItem(FAVOURITED_CARDS_STORAGE_KEY);
+    return favCards ? JSON.parse(favCards) : [];
   });
   const [currentPage, setCurrentPage] = useState(0);
   const [activeCard, setActiveCard] = useState(null);
   const [activeTab, setActiveTab] = useState('explore-section');
 
   useEffect(() => {
-    localStorage.setItem(SAVED_CARDS_STORAGE_KEY, JSON.stringify(cards));
-  }, [cards]);
+    localStorage.setItem(SAVED_CARDS_STORAGE_KEY, JSON.stringify(savedCards));
+    localStorage.setItem(FAVOURITED_CARDS_STORAGE_KEY, JSON.stringify(favouritedCards));
+    console.log("favouritedCards", favouritedCards)
+  }, [savedCards, favouritedCards]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -61,7 +68,7 @@ const BinderView = () => {
 
   const getSlotsForPage = (pageIndex) => {
     const slots = Array(NUMBER_OF_SLOTS).fill(null);
-    cards.forEach(card => {
+    savedCards.forEach(card => {
       if (card.pageIndex === pageIndex && card.slotIndex >= 0 && card.slotIndex < NUMBER_OF_SLOTS) {
         slots[card.slotIndex] = card;
       }
@@ -87,7 +94,7 @@ const BinderView = () => {
     const draggedCard = active.data.current.card;
     // If the card is from the binder (no valid uniqueId). Move within binder
     if (draggedCard.uniqueId !== undefined) {
-      setCards((prev) => {
+      setSavedCards((prev) => {
         const updated = [...prev];
 
         const updatedCards = updated.map((card) => {
@@ -113,7 +120,7 @@ const BinderView = () => {
         pageIndex: currentPage,
       };
 
-      setCards((prevCards) => {
+      setSavedCards((prevCards) => {
         const updated = [...prevCards];
         const existingIndex = updated.findIndex(
           (c) => c.slotIndex === toSlot && c.pageIndex === currentPage
@@ -131,10 +138,19 @@ const BinderView = () => {
   };
 
   const handleDeleteCard = (cardToDelete) => {
-    setCards(prev => {
+    setSavedCards(prev => {
       return prev.filter(c => c.uniqueId !== cardToDelete.uniqueId);
     });
   };
+
+  const handleFavouriteCard = (cardToFavourite) => {
+    const isFavourited = favouritedCards.some(c => c.id === cardToFavourite.id);
+    if (isFavourited) {
+      setFavouritedCards(prev => prev.filter(c => c.id !== cardToFavourite.id));
+    } else {
+      setFavouritedCards(prev => [...prev, cardToFavourite]);
+    }
+  }
 
   const handlePageChange = (pageNum) => {
     setCurrentPage(pageNum - 1);
@@ -145,21 +161,21 @@ const BinderView = () => {
   };
 
   const handleClearPage = () => {
-    const updatedCards = cards.filter(c => c.pageIndex !== currentPage);
-    setCards(updatedCards);
+    const updatedCards = savedCards.filter(c => c.pageIndex !== currentPage);
+    setSavedCards(updatedCards);
   };
 
   const tabItems = [
     {
       key: 'explore-section',
       label: 'Explore',
-      children: <ExploreSection />,
+      children: <ExploreSection onFavourite={handleFavouriteCard} favouritedCards={favouritedCards}/>,
       icon: <SearchOutlined />
     },
     {
       key: 'favourite-section',
       label: 'Favourites',
-      children: <FavouriteSection />,
+      children: <FavouriteSection onFavourite={handleFavouriteCard} favouritedCards={favouritedCards}/>,
       icon: <HeartOutlined />
     }
   ];
