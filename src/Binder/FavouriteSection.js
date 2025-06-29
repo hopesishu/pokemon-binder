@@ -16,8 +16,8 @@ const FavouriteSection = ({ onFavourite, favouritedCards, onCardClick }) => {
           justifyContent: 'center',
           overflowY: visibleCards.length > 0 ? 'scroll' : 'auto',
           overflowX: 'hidden',
-          minHeight: 'calc(100vh - 128px)',
-          maxHeight: 'calc(100vh - 128px)',
+          minHeight: 'calc(100vh - 108px)',
+          maxHeight: 'calc(100vh - 108px)',
           paddingRight: '8px',
       }}>
         <div style={{ width: '100%' }}>

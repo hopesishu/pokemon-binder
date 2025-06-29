@@ -9,7 +9,7 @@ import {
   rectIntersection
 } from '@dnd-kit/core';
 
-import { Row, Col, Tabs, Layout, Pagination, Button, Grid } from 'antd';
+import { Row, Col, Tabs, Layout, Pagination, Button, Grid, Divider, Flex, Tooltip } from 'antd';
 import { HeartOutlined, SearchOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import ExploreSection from './ExploreSection';
@@ -225,6 +225,8 @@ const BinderView = () => {
       >
         <Content style={{ overflowY: 'auto', padding: 16 }}>
           <Row gutter={[16, 16]}>
+            <Col xs={24} lg={2} />
+            
             <Col xs={24} lg={10}>
               <Tabs
                 tabPosition={screens.lg ? 'left' : 'top'}
@@ -235,37 +237,50 @@ const BinderView = () => {
               />
             </Col>
 
-            <Col xs={24} lg={10}>
-              <div style={{ textAlign: 'center', marginBottom: 12 }}>
-                <Pagination
-                  align='center'
-                  current={currentPage + 1}
-                  total={NUMBER_OF_PAGES * 9}
-                  showSizeChanger={false}
-                  onChange={handlePageChange}
-                />
-              </div>
-
-              <DisplaySection 
-                activeCard={activeCard} 
-                slots={slots} 
-                nextEmptySlotIndex={nextEmptySlotIndex} 
-                onDelete={handleDeleteCard} 
-                onFavourite={handleFavouriteCard} 
-                favouritedCards={favouritedCards}
-              />
+            <Col xs={0} lg={1} 
+              style={{ 
+                display: 'flex', 
+                justifyContent: 'center'
+              }}>
+              <Divider type='vertical' style={{ height: '100%' }} />
             </Col>
 
-            <Col xs={24} lg={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-              <Button
-                danger
-                type='primary'
-                onClick={handleClearPage}
-                icon={<DeleteOutlined />}
-                block={!screens.md}
-              >
-                Clear Page
-              </Button>
+            <Col xs={24} lg={10}>
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <Flex vertical style={{ gap: 12 }}>
+                  <Row align="middle" justify="space-between" style={{ width: '100%' }}>
+                    <Col flex="auto" style={{ display: 'flex', justifyContent: 'center' }}>
+                      <Pagination
+                        current={currentPage + 1}
+                        total={NUMBER_OF_PAGES * 9}
+                        showSizeChanger={false}
+                        onChange={handlePageChange}
+                      />
+                    </Col>
+                    <Col flex="none">
+                      <Tooltip title="Clear current page">
+                        <Button
+                          danger
+                          shape="round"
+                          type="dashed"
+                          onClick={handleClearPage}
+                          icon={<DeleteOutlined />}
+                          block={!screens.md}
+                        />
+                      </Tooltip>
+                    </Col>
+                  </Row>
+
+                  <DisplaySection 
+                    activeCard={activeCard} 
+                    slots={slots} 
+                    nextEmptySlotIndex={nextEmptySlotIndex} 
+                    onDelete={handleDeleteCard} 
+                    onFavourite={handleFavouriteCard} 
+                    favouritedCards={favouritedCards}
+                  />
+                </Flex>
+              </div>
             </Col>
           </Row>
 

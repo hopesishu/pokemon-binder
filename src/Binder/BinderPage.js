@@ -8,16 +8,16 @@ const BinderPage = ({ activeCard, slots, nextEmptySlotIndex, onDelete, onFavouri
         <Row gutter={[4, 4]} justify='center'>
           {slots?.map((card, index) => (
             <Col key={`slot-${index}`} span={8}>
-                <DropSlot
-                  key={`slot-${index}`}
-                  id={`slot-${index}`}
-                  card={card}
-                  onDelete={onDelete}
-                  hideCard={activeCard?.uniqueId === card?.uniqueId}
-                  isDropSlotEmpty={index === nextEmptySlotIndex}
-                  onFavourite={onFavourite}
-                  favouritedCards={favouritedCards}
-                />
+              <DropSlot
+                key={`slot-${index}`}
+                id={`slot-${index}`}
+                card={card}
+                onDelete={onDelete}
+                hideCard={activeCard?.uniqueId === card?.uniqueId}
+                isDropSlotEmpty={index === nextEmptySlotIndex}
+                onFavourite={onFavourite}
+                favouritedCards={favouritedCards}
+              />
             </Col>
           ))}
         </Row>

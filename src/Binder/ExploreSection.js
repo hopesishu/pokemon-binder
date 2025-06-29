@@ -183,8 +183,8 @@ const ExploreSection = ({ onFavourite, favouritedCards, onCardClick }) => {
           justifyContent: 'center',
           overflowY: visibleCards.length > 0 ? 'scroll' : 'auto',
           overflowX: 'hidden',
-          minHeight: 'calc(100vh - 260px)',
-          maxHeight: 'calc(100vh - 260px)',
+          minHeight: 'calc(100vh - 240px)',
+          maxHeight: 'calc(100vh - 240px)',
           paddingRight: '8px',
       }}>
         <div style={{ width: '100%' }}>
