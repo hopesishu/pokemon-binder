@@ -75,7 +75,29 @@ const BinderView = () => {
     return slots;
   };
 
+  const getNextEmptySlotIndexForPage = () => {
+    const emptySlotIndex = slots.findIndex(card => card === null);
+    return emptySlotIndex;
+  }
+
   const slots = getSlotsForPage(currentPage);
+  const nextEmptySlotIndex = getNextEmptySlotIndexForPage();
+
+  const handleCardClick = (cardClicked) => {
+    if (nextEmptySlotIndex === -1) return;
+    const newCard = {
+      uniqueId: uuidv4(),
+      ...cardClicked,
+      slotIndex: nextEmptySlotIndex,
+      pageIndex: currentPage,
+    };
+
+    setSavedCards((prevCards) => {
+      const updated = [...prevCards];
+      updated.push(newCard);
+      return updated;
+    });
+  }
 
   const handleDragStart = (event) => {
     setActiveCard(event.active.data.current.card);
@@ -168,13 +190,13 @@ const BinderView = () => {
     {
       key: 'explore-section',
       label: 'Explore',
-      children: <ExploreSection onFavourite={handleFavouriteCard} favouritedCards={favouritedCards}/>,
+      children: <ExploreSection onFavourite={handleFavouriteCard} favouritedCards={favouritedCards} onCardClick={handleCardClick} />,
       icon: <SearchOutlined />
     },
     {
       key: 'favourite-section',
       label: 'Favourites',
-      children: <FavouriteSection onFavourite={handleFavouriteCard} favouritedCards={favouritedCards}/>,
+      children: <FavouriteSection onFavourite={handleFavouriteCard} favouritedCards={favouritedCards} onCardClick={handleCardClick}/>,
       icon: <HeartOutlined />
     }
   ];
@@ -224,7 +246,7 @@ const BinderView = () => {
                 />
               </div>
 
-              <DisplaySection activeCard={activeCard} slots={slots} onDelete={handleDeleteCard} />
+              <DisplaySection activeCard={activeCard} slots={slots} nextEmptySlotIndex={nextEmptySlotIndex} onDelete={handleDeleteCard} />
             </Col>
 
             <Col xs={24} lg={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>

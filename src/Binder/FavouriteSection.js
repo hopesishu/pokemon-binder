@@ -2,7 +2,7 @@ import { Flex, Row, Col, Button } from 'antd';
 import DraggableCard from '../DragAndDrop/DraggableCard';
 import { useCardPagination} from '../utils/useCardPagination';
 
-const FavouriteSection = ({ onFavourite, favouritedCards}) => {
+const FavouriteSection = ({ onFavourite, favouritedCards, onCardClick }) => {
 
   const { visibleCardCount, handleShowMore } = useCardPagination();
   const visibleCards = favouritedCards.slice(0, visibleCardCount);
@@ -32,7 +32,7 @@ const FavouriteSection = ({ onFavourite, favouritedCards}) => {
                   lg={8}      // 3 per row on large screens
                   xl={6}      // 4 per row on extra-large screens
                 >
-                  <DraggableCard card={card} onFavourite={onFavourite} favouritedCards={favouritedCards} />
+                  <DraggableCard card={card} onFavourite={onFavourite} favouritedCards={favouritedCards} onCardClick={onCardClick} />
                 </Col>
                 ))
             } 

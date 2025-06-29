@@ -7,7 +7,7 @@ import { useLoadingState } from '../utils/useLoadingState';
 
 const { Text } = Typography;
 
-const ExploreSection = ({ onFavourite, favouritedCards }) => {
+const ExploreSection = ({ onFavourite, favouritedCards, onCardClick }) => {
   const { visibleCardCount, handleShowMore } = useCardPagination();
   const { isLoading, setIsLoading } = useLoadingState();
 
@@ -20,37 +20,7 @@ const ExploreSection = ({ onFavourite, favouritedCards }) => {
   const [pokemonType, setPokemonType] = useState(null);
 
   const selectRef = useRef(null);
-
-  useEffect(() => {
-    const getRarityList = async () => {
-      try {
-        const response = await fetch('https://api.tcgdex.net/v2/en/rarities');
-        if (!response.ok) throw new Error('Network response was not ok');
-
-        const data = await response.json();
-        setRarityList(data);
-      } catch (error) {
-        console.error('Error fetching rarity list:', error);
-      }
-    };
-
-    const getPokemonTypeList = async() => {
-      try {
-        const response = await fetch('https://api.tcgdex.net/v2/en/types');
-        if (!response.ok) throw new Error('Network response was not ok');
-
-        const data = await response.json();
-        setPokemonTypeList(data);
-      } catch (error) {
-        console.error('Error fetching Pokemon type list:', error);
-      }
-    }
-
-    getRarityList();
-    getPokemonTypeList();
-    fetchCards(pokemonName, rarity, pokemonType);
-  }, []);
-
+  
   const fetchCards = async (pokemonName, rarity, pokemonType) => {
     setIsLoading(true);
     const params = new URLSearchParams();
@@ -95,6 +65,32 @@ const ExploreSection = ({ onFavourite, favouritedCards }) => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const [raritiesRes, typesRes] = await Promise.all([
+          fetch('https://api.tcgdex.net/v2/en/rarities'),
+          fetch('https://api.tcgdex.net/v2/en/types'),
+        ]);
+
+        if (!raritiesRes.ok || !typesRes.ok) throw new Error("One or more fetches failed");
+
+        const [rarities, types] = await Promise.all([
+          raritiesRes.json(),
+          typesRes.json()
+        ]);
+
+        setRarityList(rarities);
+        setPokemonTypeList(types);
+        await fetchCards("", "", "");
+      } catch (err) {
+        console.error("Init failed:", err);
+      }
+    };
+
+    init();
+  }, []);
 
   const handleSearchChange = () => {
     fetchCards(pokemonName, rarity, pokemonType);
@@ -208,7 +204,7 @@ const ExploreSection = ({ onFavourite, favouritedCards }) => {
                   lg={8}      // 3 per row on large screens
                   xl={6}      // 4 per row on extra-large screens
                 >
-                  <DraggableCard card={card} onFavourite={onFavourite} favouritedCards={favouritedCards} />
+                  <DraggableCard card={card} onFavourite={onFavourite} favouritedCards={favouritedCards} onCardClick={onCardClick} />
                 </Col>
                 ))
               : (

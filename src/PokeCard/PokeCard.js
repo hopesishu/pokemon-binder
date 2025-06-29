@@ -3,7 +3,7 @@ import { Card, Button, Tooltip, Skeleton } from 'antd';
 import { DeleteFilled, HeartFilled, HeartOutlined } from '@ant-design/icons';
 import './PokeCard.css';
 
-const PokeCard = ({ card, isInDisplaySection, onDelete, onFavourite, favouritedCards }) => {
+const PokeCard = ({ card, isInDisplaySection, onDelete, onFavourite, favouritedCards, onCardClick }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const isFavourited = (favouritedCards ?? []).some(favCard => favCard.id === card.id);
 
@@ -57,6 +57,7 @@ const PokeCard = ({ card, isInDisplaySection, onDelete, onFavourite, favouritedC
           hoverable
           variant='borderless'
           className='poke-card'
+          onClick={() => onCardClick?.(card)}
           cover={
             <img 
               alt={card.name} 
