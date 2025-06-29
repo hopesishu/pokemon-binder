@@ -25,7 +25,7 @@ const PokeCard = ({ card, isInDisplaySection, onDelete, onFavourite, favouritedC
           </Tooltip>
         )}
 
-        {!isInDisplaySection && isImageLoaded && (
+        {isImageLoaded && (
           <Tooltip 
             title={isFavourited ? 'Remove Favourite' : 'Add to Favourites'}
             key={isFavourited ? 'favourited' : 'not-favourited'}

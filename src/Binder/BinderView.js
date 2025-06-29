@@ -246,7 +246,14 @@ const BinderView = () => {
                 />
               </div>
 
-              <DisplaySection activeCard={activeCard} slots={slots} nextEmptySlotIndex={nextEmptySlotIndex} onDelete={handleDeleteCard} />
+              <DisplaySection 
+                activeCard={activeCard} 
+                slots={slots} 
+                nextEmptySlotIndex={nextEmptySlotIndex} 
+                onDelete={handleDeleteCard} 
+                onFavourite={handleFavouriteCard} 
+                favouritedCards={favouritedCards}
+              />
             </Col>
 
             <Col xs={24} lg={4} style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>

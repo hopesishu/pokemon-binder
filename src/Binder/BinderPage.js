@@ -1,7 +1,7 @@
 import { Row, Col } from 'antd';
 import DropSlot from '../DragAndDrop/DropSlot';
 
-const BinderPage = ({ activeCard, slots, nextEmptySlotIndex, onDelete }) => {
+const BinderPage = ({ activeCard, slots, nextEmptySlotIndex, onDelete, onFavourite, favouritedCards }) => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
       <div style={{ maxWidth: '550px'}}>
@@ -15,6 +15,8 @@ const BinderPage = ({ activeCard, slots, nextEmptySlotIndex, onDelete }) => {
                   onDelete={onDelete}
                   hideCard={activeCard?.uniqueId === card?.uniqueId}
                   isDropSlotEmpty={index === nextEmptySlotIndex}
+                  onFavourite={onFavourite}
+                  favouritedCards={favouritedCards}
                 />
             </Col>
           ))}
