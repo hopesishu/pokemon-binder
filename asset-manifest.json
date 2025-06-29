@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/pokemon-binder/static/css/main.5eb35695.css",
-    "main.js": "/pokemon-binder/static/js/main.59e1f6ce.js",
+    "main.js": "/pokemon-binder/static/js/main.bcc089cf.js",
     "index.html": "/pokemon-binder/index.html",
     "main.5eb35695.css.map": "/pokemon-binder/static/css/main.5eb35695.css.map",
-    "main.59e1f6ce.js.map": "/pokemon-binder/static/js/main.59e1f6ce.js.map"
+    "main.bcc089cf.js.map": "/pokemon-binder/static/js/main.bcc089cf.js.map"
   },
   "entrypoints": [
     "static/css/main.5eb35695.css",
-    "static/js/main.59e1f6ce.js"
+    "static/js/main.bcc089cf.js"
   ]
 }
