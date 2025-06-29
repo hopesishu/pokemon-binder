@@ -2,18 +2,18 @@ import { useState, useEffect, useRef } from 'react';
 import { Flex, Typography, Input, Select, Row, Col, Spin, Button, Tooltip } from 'antd';
 import { PokemonTypeIconImg } from '../assets/pokmon-type-icons/PokemonTypeIcons';
 import DraggableCard from '../DragAndDrop/DraggableCard';
+import { useCardPagination} from '../utils/useCardPagination';
+import { useLoadingState } from '../utils/useLoadingState';
 
 const { Text } = Typography;
 
-const DEFAULT_VISIBLE_COUNT = 52;
-
 const ExploreSection = ({ onFavourite, favouritedCards }) => {
-  const [allCards, setAllCards] = useState([]);
-  const [visibleCardCount, setVisibleCardCount] = useState(DEFAULT_VISIBLE_COUNT);
+  const { visibleCardCount, handleShowMore } = useCardPagination();
+  const { isLoading, setIsLoading } = useLoadingState();
 
+  const [allCards, setAllCards] = useState([]);
   const [rarityList, setRarityList] = useState([]);
   const [pokemonTypeList, setPokemonTypeList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const [pokemonName, setPokemonName] = useState('');
   const [rarity, setRarity] = useState('all');
@@ -53,7 +53,6 @@ const ExploreSection = ({ onFavourite, favouritedCards }) => {
 
   const fetchCards = async (pokemonName, rarity, pokemonType) => {
     setIsLoading(true);
-    setVisibleCardCount(DEFAULT_VISIBLE_COUNT);
     const params = new URLSearchParams();
 
     if (pokemonName) {
@@ -73,7 +72,7 @@ const ExploreSection = ({ onFavourite, favouritedCards }) => {
     try {
       const response = await fetch(`https://api.tcgdex.net/v2/en/cards?${params.toString()}`);
       console.log('Params used:', params.toString());
-      console.log(`api call: https://api.tcgdex.net/v2/en/cards?${params.toString()}`)
+      console.log(`API used: https://api.tcgdex.net/v2/en/cards?${params.toString()}`)
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -115,11 +114,6 @@ const ExploreSection = ({ onFavourite, favouritedCards }) => {
     const newType = pokemonType === type ? null : type;
     setPokemonType(newType);
     fetchCards(pokemonName, rarity, newType);
-  }
-
-  const handleShowMore = () => {
-    const newCount = visibleCardCount + DEFAULT_VISIBLE_COUNT;
-    setVisibleCardCount(newCount);
   }
 
   const capitalizeWords = (str) => {

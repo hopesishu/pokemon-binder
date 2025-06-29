@@ -50,7 +50,6 @@ const BinderView = () => {
   useEffect(() => {
     localStorage.setItem(SAVED_CARDS_STORAGE_KEY, JSON.stringify(savedCards));
     localStorage.setItem(FAVOURITED_CARDS_STORAGE_KEY, JSON.stringify(favouritedCards));
-    console.log("favouritedCards", favouritedCards)
   }, [savedCards, favouritedCards]);
 
   useEffect(() => {

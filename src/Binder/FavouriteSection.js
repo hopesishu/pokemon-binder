@@ -1,17 +1,11 @@
-import { useState } from 'react';
 import { Flex, Row, Col, Button } from 'antd';
 import DraggableCard from '../DragAndDrop/DraggableCard';
-
-const DEFAULT_VISIBLE_COUNT = 52;
+import { useCardPagination} from '../utils/useCardPagination';
 
 const FavouriteSection = ({ onFavourite, favouritedCards}) => {
-  const [visibleCardCount, setVisibleCardCount] = useState(DEFAULT_VISIBLE_COUNT);
-  const visibleCards = favouritedCards.slice(0, visibleCardCount);
 
-  const handleShowMore = () => {
-    const newCount = visibleCardCount + DEFAULT_VISIBLE_COUNT;
-    setVisibleCardCount(newCount);
-  }
+  const { visibleCardCount, handleShowMore } = useCardPagination();
+  const visibleCards = favouritedCards.slice(0, visibleCardCount);
 
   return (
     <Flex vertical gap={12}>
