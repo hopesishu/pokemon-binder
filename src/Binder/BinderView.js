@@ -246,7 +246,7 @@ const BinderView = () => {
             </Col>
 
             <Col xs={24} lg={10}>
-              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <div style={{ display: 'flex', justifyContent: screens.lg ? 'flex-start' : 'center' }}> 
                 <Flex vertical style={{ gap: 12 }}>
                   <Row align="middle" justify="space-between" style={{ width: '100%' }}>
                     <Col flex="auto" style={{ display: 'flex', justifyContent: 'center' }}>
