@@ -1,6 +1,7 @@
 import { Flex, Row, Col, Button } from 'antd';
 import DraggableCard from '../DragAndDrop/DraggableCard';
 import { useCardPagination} from '../utils/useCardPagination';
+import { displayFormattedNumber } from '../utils/utils';
 
 const FavouriteSection = ({ onFavourite, favouritedCards, onCardClick }) => {
 
@@ -40,7 +41,7 @@ const FavouriteSection = ({ onFavourite, favouritedCards, onCardClick }) => {
           <Row justify='center'>
             {visibleCards.length < favouritedCards.length &&
               <Button type='link' onClick={handleShowMore}>
-                {`Show more cards (${visibleCardCount}/${favouritedCards.length} shown)`}
+                {`Show more cards (${displayFormattedNumber(visibleCardCount)}/${displayFormattedNumber(favouritedCards.length)} shown)`} 
               </Button>
             }
           </Row>

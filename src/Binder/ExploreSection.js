@@ -4,6 +4,7 @@ import { PokemonTypeIconImg } from '../assets/pokmon-type-icons/PokemonTypeIcons
 import DraggableCard from '../DragAndDrop/DraggableCard';
 import { useCardPagination} from '../utils/useCardPagination';
 import { useLoadingState } from '../utils/useLoadingState';
+import { displayFormattedNumber } from '../utils/utils';
 
 const { Text } = Typography;
 
@@ -26,7 +27,7 @@ const ExploreSection = ({ onFavourite, favouritedCards, onCardClick }) => {
     const params = new URLSearchParams();
 
     if (pokemonName) {
-      params.set('name', pokemonName);
+      params.set('name', pokemonName.trim());
     }
 
     if (rarity && rarity !== 'all') {
@@ -214,7 +215,7 @@ const ExploreSection = ({ onFavourite, favouritedCards, onCardClick }) => {
           <Row justify='center'>
             {visibleCards.length < allCards.length && !isLoading &&
               <Button type='link' onClick={handleShowMore}>
-                {`Show more cards (${visibleCardCount}/${allCards.length} shown)`}
+                {`Show more cards (${displayFormattedNumber(visibleCardCount)}/${displayFormattedNumber(allCards.length)} shown)`} 
               </Button>
             }
           </Row>
